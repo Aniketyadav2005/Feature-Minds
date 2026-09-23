@@ -9,76 +9,87 @@ An end-to-end full-stack AI application for analysing meme images, extracting an
 The **Meme Hate Speech Detector** combines:
 
 meme-detector/
-│
-├── backend/
-│   │
-│   ├── app/
-│   │   ├── core/
-│   │   │   ├── dependencies.py
-│   │   │   └── security.py
-│   │   │
-│   │   ├── features/
-│   │   │   ├── analyze/
-│   │   │   │   ├── router.py
-│   │   │   │   └── service.py
-│   │   │   │
-│   │   │   ├── export/
-│   │   │   │   ├── router.py
-│   │   │   │   └── service.py
-│   │   │   │
-│   │   │   ├── history/
-│   │   │   │   └── service.py
-│   │   │   │
-│   │   │   ├── research/
-│   │   │   │   └── ...
-│   │   │   │
-│   │   │   └── serializers.py
-│   │   │
-│   │   ├── ml/
-│   │   │   ├── ocr_engine.py
-│   │   │   ├── language_validator.py
-│   │   │   ├── caption_engine.py
-│   │   │   ├── classifier_engine.py
-│   │   │   ├── keywords.py
-│   │   │   ├── image_utils.py
-│   │   │   └── ...
-│   │   │
-│   │   ├── models/
-│   │   │   ├── user.py
-│   │   │   └── analysis.py
-│   │   │
-│   │   ├── schemas/
-│   │   │   └── analysis.py
-│   │   │
-│   │   ├── database.py
-│   │   ├── config.py
-│   │   └── main.py
-│   │
-│   └── requirements.txt
-│
-├── frontend/
-│   │
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── core/
-│   │   │   │   ├── models/
-│   │   │   │   └── services/
-│   │   │   │
-│   │   │   ├── features/
-│   │   │   │   ├── analyze/
-│   │   │   │   ├── history/
-│   │   │   │   └── research/
-│   │   │   │
-│   │   │   └── shared/
-│   │   │       └── components/
-│   │   │
-│   │   └── environments/
-│   │
-│   ├── angular.json
-│   ├── package.json
-│   └── ...
-│
-└── README.md
+
+backend/
+  app/
+    core/
+      dependencies.py
+      security.py
+
+    features/
+      analyze/
+        router.py
+        service.py
+
+      auth/
+        router.py
+        service.py
+
+      export/
+        router.py
+        service.py
+
+      history/
+        router.py
+        service.py
+
+      research/
+        router.py
+        service.py
+
+      serializers.py
+
+    ml/
+      ocr_engine.py
+      language_validator.py
+      caption_engine.py
+      classifier_engine.py
+      keywords.py
+      image_utils.py
+
+    models/
+      user.py
+      analysis.py
+
+    schemas/
+      analysis.py
+      auth.py
+      export.py
+
+    services/
+      indiclid_service.py
+
+    database.py
+    config.py
+    main.py
+
+  requirements.txt
+  Dockerfile
+
+frontend/
+  src/
+    app/
+      core/
+      features/
+        analyze/
+        history/
+        research/
+        auth/
+      shared/
+        components/
+
+  angular.json
+  package.json
+
+database/
+  schema.sql
+
+docker-compose.yml
+README.md
+
+### Basic Workflow
+
+Upload Meme → OCR → Language Validation → Image Captioning → Hate Speech Detection → Category Detection → Save Result → History & Research
 
 # 3) The application follows a complete AI analysis pipeline:
 
@@ -210,7 +221,7 @@ mr	Marathi
                    ↓
                 MySQL
 
-# 8) OCR Pipeline :
+# 8) OCR Pipeline:
 
           The OCR engine uses EasyOCR together with image preprocessing and text post-processing.
 
@@ -243,7 +254,7 @@ mr	Marathi
 
 
 
-# 9) Authentication : The project uses JWT-based authentication.
+# 9) Authentication: The project uses JWT-based authentication.
 
                 Register
                   ↓
@@ -262,7 +273,7 @@ mr	Marathi
                 Current Authenticated User
 
 
-# 10) Frontend : The Angular frontend provides a user-friendly interface for meme analysis, history tracking, and analytics visualization.
+# 10) Frontend: The Angular frontend provides a user-friendly interface for meme analysis, history tracking, and analytics visualization.
 
           Frontend technology : 
 
@@ -280,35 +291,31 @@ mr	Marathi
                            
                            ↓
 
-# 11) Backend : The FastAPI backend handles meme analysis, OCR processing, hate speech classification, and database interactions.
+# 11) Backend: The FastAPI backend handles meme analysis, OCR processing, hate speech classification, and database interactions.
 
-          Backend technology : 
-                          
-                      HTTP / JSON
-                           │
+Backend Technology
+
+HTTP / JSON
+     ↓
+FastAPI Backend
+     ↓
+Auth | Analyze | History | Research | Export
+     ↓
+AI / ML
+     ↓
+EasyOCR
+     ↓
+Language Validation
+     ↓
+BLIP
+     ↓
+Hate Speech Classifier
+     ↓
+Categorisation
+     ↓
+Image Processing
                            ↓
-┌─────────────────────────────────────────────────────────┐
-│                    FASTAPI BACKEND                      │
-│                                                         │
-│ Auth │ Analyze │ History │ Research │ Export            │
-│                                                         │
-│ Services │ Schemas │ Security │ Dependencies            │
-└───────────────┬────────────────────── ──────────────────┘
-                    │                      
-                    ↓                      
-            ┌─────────────────┐    
-            │      AI / ML    │    
-            │                 │    
-            │ EasyOCR         │    
-            │ Language        │    
-            │ Validation      │    
-            │ BLIP            │    
-            │ Classifier      │    
-            │ Categorisation  │
-            │ Image Processing│
-            └─────────────────┘
-                           ↓
-# 12) Database : The MySQL database stores analysis results, user data, and history for future reference.
+# 12) Database: The MySQL database stores analysis results, user data, and history for future reference.
 
           Database technology : 
 
