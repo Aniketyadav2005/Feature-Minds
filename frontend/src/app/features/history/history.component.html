@@ -1,0 +1,185 @@
+<h1>📋 Upload History</h1>
+
+<div *ngIf="!loading && stats && stats.total === 0">
+  <p class="hint">No images analysed yet. Go to the <strong>Analyse Images</strong> tab to get started.</p>
+</div>
+
+<ng-container *ngIf="stats && stats.total > 0">
+  <div class="stats-row">
+    <app-stat-card label="📦 Total" [value]="stats.total"></app-stat-card>
+    <app-stat-card label="🚨 Hateful" [value]="stats.hate_count"></app-stat-card>
+    <app-stat-card label="✅ Safe" [value]="stats.safe_count"></app-stat-card>
+    <app-stat-card label="📊 Avg Hate Score" [value]="stats.avg_hate_score + '%'"></app-stat-card>
+  </div>
+
+<!-- ===================================================== -->
+<!-- ANALYTICS -->
+<!-- ===================================================== -->
+
+<section class="analytics-section">
+
+  <div class="analytics-header">
+    <div>
+      <h2>📈 Analytics</h2>
+      <p>
+        Visual overview of your meme analysis results.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- THREE GRAPHS -->
+  <!-- ================================================= -->
+
+  <div class="charts-row">
+
+
+    <!-- GRAPH 1 -->
+    <div class="chart-card">
+
+      <div class="chart-card-header">
+        <h3>📊 Hate vs Safe</h3>
+        <p>Distribution of analysed memes</p>
+      </div>
+
+     <div class="chart-container doughnut-container">
+  <canvas
+    baseChart
+    [data]="pieData"
+    [options]="pieOptions"
+    type="doughnut">
+  </canvas>
+</div>
+
+    </div>
+
+
+    <!-- GRAPH 2 -->
+    <div class="chart-card">
+
+      <div class="chart-card-header">
+        <h3>📋 Hate Categories</h3>
+        <p>Detected hate categories</p>
+      </div>
+
+      <div class="chart-container">
+        <canvas
+          baseChart
+          [data]="barData"
+          [options]="barOptions"
+          type="bar">
+        </canvas>
+      </div>
+
+    </div>
+
+
+    <!-- GRAPH 3 -->
+    <div
+      class="chart-card"
+      *ngIf="stats.timeline.length > 1"
+    >
+
+      <div class="chart-card-header">
+        <h3>📈 Hate Score Timeline</h3>
+        <p>Hate score across analysed memes</p>
+      </div>
+
+      <div class="chart-container">
+        <canvas
+          baseChart
+          [data]="lineData"
+          [options]="lineOptions"
+          type="line">
+        </canvas>
+      </div>
+
+    </div>
+
+
+  </div>
+
+</section>
+
+  <div class="filter-row">
+    <button [class.active]="filter === 'all'" (click)="setFilter('all')">All</button>
+    <button [class.active]="filter === 'hate'" (click)="setFilter('hate')">Hateful Only</button>
+    <button [class.active]="filter === 'safe'" (click)="setFilter('safe')">Safe Only</button>
+    <span class="spacer"></span>
+    <button class="danger" (click)="clearAll()">🗑️ Clear History</button>
+  </div>
+
+  <p class="hint">Showing {{ history.length }} result(s)</p>
+
+  <!-- ===================================================== -->
+<!-- HISTORY RESULTS -->
+<!-- ===================================================== -->
+
+<section class="history-results-section">
+
+  <div class="history-results-header">
+    <div>
+      <h3>📋 Analysis History</h3>
+      <p>
+        Your previously analysed meme results.
+      </p>
+    </div>
+
+    <span class="history-count">
+      {{ history.length }} result(s)
+    </span>
+  </div>
+
+
+  <!-- SCROLLABLE RESULTS -->
+  <div class="history-scroll-container">
+
+    <div
+      *ngFor="let r of history"
+      class="history-item"
+    >
+
+      <app-result-card
+        [result]="r">
+      </app-result-card>
+
+      <button
+        class="link-btn danger"
+        (click)="deleteItem(r.id)"
+      >
+        🗑️ Delete this result
+      </button>
+
+    </div>
+
+
+    <!-- OPTIONAL EMPTY STATE -->
+    <div
+      class="history-empty"
+      *ngIf="history.length === 0"
+    >
+      <span>📭</span>
+      <p
+  *ngIf="history.length === 0"
+  class="empty-history"
+>
+  No results found for this filter.
+</p>
+    </div>
+
+  </div>
+
+</section>
+
+  <div class="export-row">
+    <h3>📥 Export Full History</h3>
+    <button
+      class="primary"
+      type="button"
+      (click)="downloadPdf()"
+    >
+      ⬇️ Export History PDF
+    </button>
+  </div>
+</ng-container>

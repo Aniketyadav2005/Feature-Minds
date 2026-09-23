@@ -1,0 +1,122 @@
+<header class="topbar" *ngIf="!isAuthPage">
+
+  <!-- BRAND -->
+  <div class="brand">
+    <span class="brand-icon">🤖</span>
+
+    <div class="brand-text">
+      <span class="brand-title">Meme Detector</span>
+      <span class="brand-sub">AI-Powered Meme Content Analysis</span>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="main-nav">
+    <a
+      routerLink="/analyze"
+      routerLinkActive="active"
+    >
+      Analyse Images
+    </a>
+
+    <a
+      routerLink="/history"
+      routerLinkActive="active"
+    >
+      Upload History
+    </a>
+
+    <a
+      routerLink="/research"
+      routerLinkActive="active"
+    >
+      Research Metrics
+    </a>
+  </nav>
+
+  <!-- USER -->
+  <div class="user-area" *ngIf="auth.user() as u; else guestLinks">
+
+    <button
+      class="profile-btn"
+      (click)="toggleProfile()"
+    >
+      <span class="avatar">
+        {{ u.name.charAt(0).toUpperCase() || '?' }}
+      </span>
+
+      <span class="user-name">
+        {{ u.name }}
+      </span>
+
+      <span
+        class="chevron"
+        [class.open]="isProfileOpen"
+      >
+        ▾
+      </span>
+    </button>
+
+    <div
+      class="profile-dropdown"
+      *ngIf="isProfileOpen"
+    >
+      <div class="dropdown-header">
+
+        <span class="avatar avatar-lg">
+          {{ u.name.charAt(0).toUpperCase() || '?' }}
+        </span>
+
+        <div>
+          <div class="dropdown-name">
+            {{ u.name }}
+          </div>
+
+          <div class="dropdown-email">
+            {{ u.email }}
+          </div>
+        </div>
+
+      </div>
+
+      <hr />
+
+      <button
+        class="logout-btn"
+        (click)="logout()"
+      >
+        ⏻ Logout
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- GUEST -->
+  <ng-template #guestLinks>
+
+    <div class="guest-links">
+
+      <a routerLink="/login">
+        Sign in
+      </a>
+
+      <a
+        routerLink="/register"
+        class="cta"
+      >
+        Sign up
+      </a>
+
+    </div>
+
+  </ng-template>
+
+</header>
+
+<main
+  class="content"
+  [class.full-bleed]="isAuthPage"
+>
+  <router-outlet />
+</main>

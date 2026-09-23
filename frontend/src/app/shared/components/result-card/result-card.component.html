@@ -1,0 +1,65 @@
+<div class="result-card card" appTilt [tiltMax]="2.5" [tiltScale]="1.005">
+  <div class="col-img">
+    <ng-container *ngIf="result.has_image && displayImageUrl; else noImage">
+      <img [src]="displayImageUrl" [alt]="result.filename" />
+      <button
+        *ngIf="result.is_hate && result.blurred_image_url"
+        class="link-btn"
+        (click)="toggleOriginal()"
+      >
+        {{ showOriginal ? 'Hide original' : '⚠️ Show original (hidden for safety)' }}
+      </button>
+      <img *ngIf="showOriginal" [src]="originalImageUrl" [alt]="result.filename" class="original" />
+    </ng-container>
+    <ng-template #noImage>
+      <div class="info-box">📂 Image not available — loaded from saved history</div>
+    </ng-template>
+  </div>
+
+  <div class="col-info">
+    <app-badge [isHate]="result.is_hate" [category]="result.category"></app-badge>
+
+    <p><strong>📄 Caption:</strong> {{ result.caption }}</p>
+    <p><strong>🔤 OCR Text:</strong> {{ result.extracted_text }}</p>
+    <p><strong>🕐 Timestamp:</strong> {{ result.timestamp | date: 'medium' }}</p>
+    <!-- <p><strong>🎯 Threshold used:</strong> {{ result.threshold_used }}%</p> -->
+
+    <div class="scores">
+      <div class="score-row">
+        <span class="conf-label">Hate probability</span>
+        <div class="bar"><div class="fill hate" [style.width.%]="result.hate_score"></div></div>
+        <span class="pct">{{ result.hate_score }}%</span>
+      </div>
+      <div class="score-row">
+        <span class="conf-label">Safe probability</span>
+        <div class="bar"><div class="fill safe" [style.width.%]="result.safe_score"></div></div>
+        <span class="pct">{{ result.safe_score }}%</span>
+      </div>
+    </div>
+
+    <div
+      *ngIf="result.is_hate && result.extracted_text && result.extracted_text !== 'No text detected.'"
+      class="flagged-text"
+    >
+      ⚠️ Flagged Text:<br />{{ result.extracted_text }}
+    </div>
+
+    <div *ngIf="showLabelling" class="labelling">
+      <span class="conf-label">Ground truth:</span>
+      <button
+        class="gt-btn"
+        [class.selected]="result.ground_truth_label === 'safe'"
+        (click)="label('safe')"
+      >
+        ✅ SAFE
+      </button>
+      <button
+        class="gt-btn"
+        [class.selected]="result.ground_truth_label === 'hate'"
+        (click)="label('hate')"
+      >
+        🚨 HATE
+      </button>
+    </div>
+  </div>
+</div>

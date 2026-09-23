@@ -1,0 +1,585 @@
+<div class="research-page">
+
+  <!-- ===================================================== -->
+  <!-- PAGE HEADER -->
+  <!-- ===================================================== -->
+
+  <header class="research-header">
+
+    <div class="header-icon">
+      🔬
+    </div>
+
+    <div class="header-content">
+      <h1>Research Metrics</h1>
+
+      <p>
+        Ground Truth Annotation & Model Evaluation
+      </p>
+    </div>
+
+  </header>
+
+
+  <!-- ===================================================== -->
+  <!-- INTRO -->
+  <!-- ===================================================== -->
+
+  <section class="intro-card">
+
+    <div class="intro-icon">
+      🧠
+    </div>
+
+    <div>
+      <h2>Evaluate your model</h2>
+
+      <p>
+        Review each analysed image and mark its actual classification.
+        Your labels are used to calculate Accuracy, Precision, Recall,
+        F1 Score, and the Confusion Matrix.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ================================================= -->
+        <!-- PDF EXPORT -->
+        <!-- ================================================= -->
+
+        <div class="export-section">
+
+          <div>
+
+            <h3>
+              Research Report
+            </h3>
+
+            <p>
+              Download the current research metrics and
+              ground-truth evaluation as a PDF report.
+            </p>
+
+          </div>
+
+          <button
+            type="button"
+            class="export-pdf-btn"
+            (click)="exportMetricsPdf()"
+          >
+            <span>📄</span>
+            Export Metrics PDF
+          </button>
+
+        </div>
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
+
+  <div
+    class="loading-card"
+    *ngIf="loading"
+  >
+    <div class="loading-spinner"></div>
+
+    <span>
+      Loading research data...
+    </span>
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- EMPTY STATE -->
+  <!-- ===================================================== -->
+
+  <section
+    class="empty-card"
+    *ngIf="!loading && history.length === 0"
+  >
+
+    <div class="empty-icon">
+      🖼️
+    </div>
+
+    <h2>No analysed images yet</h2>
+
+    <p>
+      Analyse some meme images first. Once images are available,
+      you can label them here and evaluate the model.
+    </p>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- MAIN CONTENT -->
+  <!-- ===================================================== -->
+
+  <ng-container *ngIf="!loading && history.length > 0">
+
+    <!-- =================================================== -->
+    <!-- STEP 1 -->
+    <!-- =================================================== -->
+
+    <section class="section-card">
+
+      <div class="section-header">
+
+        <div>
+          <span class="step-label">
+            STEP 01
+          </span>
+
+          <h2>
+            Ground Truth Annotation
+          </h2>
+
+          <p>
+            Tell the system what the correct classification is for
+            each analysed image.
+          </p>
+        </div>
+
+        <div class="annotation-progress">
+
+          <strong>
+            {{ history.length }}
+          </strong>
+
+          <span>
+            images
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- IMAGE LIST -->
+
+      <div class="annotation-list">
+
+        <div
+          class="annotation-item"
+          *ngFor="let r of history; let i = index"
+        >
+
+          <!-- NUMBER -->
+
+          <div class="item-number">
+            {{ i + 1 }}
+          </div>
+
+
+          <!-- IMAGE / INFORMATION -->
+
+          <div class="item-info">
+
+            <div class="filename">
+              {{ r.filename }}
+            </div>
+
+            <div class="prediction-line">
+
+              <span class="prediction-label">
+                Model prediction
+              </span>
+
+              <span
+                class="prediction-badge"
+                [class.hate]="r.is_hate"
+                [class.safe]="!r.is_hate"
+              >
+                {{ r.is_hate ? '🚨 HATE' : '✅ SAFE' }}
+              </span>
+
+              <span class="score">
+                {{ r.hate_score }}% hate score
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- GROUND TRUTH -->
+
+          <div class="ground-truth">
+
+            <span class="ground-truth-title">
+              Ground truth
+            </span>
+
+            <div class="ground-truth-buttons">
+
+              <button
+                type="button"
+                class="gt-btn safe-btn"
+                [class.selected]="r.ground_truth_label === 'safe'"
+                (click)="label(r, 'safe')"
+              >
+                <span>✓</span>
+                Safe
+              </button>
+
+              <button
+                type="button"
+                class="gt-btn hate-btn"
+                [class.selected]="r.ground_truth_label === 'hate'"
+                (click)="label(r, 'hate')"
+              >
+                <span>!</span>
+                Hate
+              </button>
+
+            </div>
+
+            <div
+              class="label-status labelled"
+              *ngIf="r.ground_truth_label"
+            >
+              ✓ Labelled as
+              <strong>
+                {{ r.ground_truth_label === 'hate' ? 'HATE' : 'SAFE' }}
+              </strong>
+            </div>
+
+            <div
+              class="label-status pending"
+              *ngIf="!r.ground_truth_label"
+            >
+              ○ Not labelled yet
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================== -->
+    <!-- STEP 2 -->
+    <!-- =================================================== -->
+
+    <section class="section-card metrics-section">
+
+      <div class="section-header">
+
+        <div>
+          <span class="step-label">
+            STEP 02
+          </span>
+
+          <h2>
+            Model Performance
+          </h2>
+
+          <p>
+            Performance calculated from your ground-truth annotations.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- NO METRICS -->
+
+      <div
+        class="metrics-empty"
+        *ngIf="!metrics"
+      >
+
+        <div class="metrics-empty-icon">
+          📊
+        </div>
+
+        <h3>
+          Label at least one image
+        </h3>
+
+        <p>
+          Select <strong>Safe</strong> or <strong>Hate</strong>
+          for an image above to generate performance metrics.
+        </p>
+
+      </div>
+
+
+      <!-- METRICS -->
+
+      <div
+        class="metrics-content"
+        *ngIf="metrics"
+      >
+
+        <div class="metrics-summary">
+
+          <span>
+            Based on
+          </span>
+
+          <strong>
+            {{ metrics.labelled_count }}
+          </strong>
+
+          <span>
+            labelled image(s)
+          </span>
+
+        </div>
+
+
+        <!-- METRIC CARDS -->
+
+        <div class="metrics-grid">
+
+          <div class="metric-card accuracy">
+
+            <div class="metric-icon">
+              🎯
+            </div>
+
+            <div class="metric-info">
+              <span>Accuracy</span>
+
+              <strong>
+                {{ metrics.accuracy.toFixed(4) }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <div class="metric-card precision">
+
+            <div class="metric-icon">
+              🔎
+            </div>
+
+            <div class="metric-info">
+              <span>Precision</span>
+
+              <strong>
+                {{ metrics.precision.toFixed(4) }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <div class="metric-card recall">
+
+            <div class="metric-icon">
+              📡
+            </div>
+
+            <div class="metric-info">
+              <span>Recall</span>
+
+              <strong>
+                {{ metrics.recall.toFixed(4) }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="metric-card f1">
+
+            <div class="metric-icon">
+              ⭐
+            </div>
+
+            <div class="metric-info">
+
+              <span>
+                F1 Score
+              </span>
+
+              <strong>
+                {{ metrics.f1_score.toFixed(4) }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CONFUSION MATRIX -->
+        <!-- ================================================= -->
+
+        <div class="matrix-section">
+
+          <div class="subsection-title">
+
+            <div>
+              <h3>
+                Confusion Matrix
+              </h3>
+
+              <p>
+                Comparison between the model prediction and
+                the actual ground truth.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="matrix-wrapper">
+
+            <table class="confusion">
+
+              <thead>
+
+                <tr>
+
+                  <th class="corner"></th>
+
+                  <th>
+                    <span class="matrix-heading hate">
+                      Predicted HATE
+                    </span>
+                  </th>
+
+                  <th>
+                    <span class="matrix-heading safe">
+                      Predicted SAFE
+                    </span>
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+
+                <tr>
+
+                  <th>
+                    Actual HATE
+                  </th>
+
+                  <td class="tp">
+                    <span class="matrix-value">
+                      {{ metrics.tp }}
+                    </span>
+
+                    <span class="matrix-label">
+                      True Positive
+                    </span>
+                  </td>
+
+                  <td class="fn">
+                    <span class="matrix-value">
+                      {{ metrics.fn }}
+                    </span>
+
+                    <span class="matrix-label">
+                      False Negative
+                    </span>
+                  </td>
+
+                </tr>
+
+
+                <tr>
+
+                  <th>
+                    Actual SAFE
+                  </th>
+
+                  <td class="fp">
+                    <span class="matrix-value">
+                      {{ metrics.fp }}
+                    </span>
+
+                    <span class="matrix-label">
+                      False Positive
+                    </span>
+                  </td>
+
+                  <td class="tn">
+                    <span class="matrix-value">
+                      {{ metrics.tn }}
+                    </span>
+
+                    <span class="matrix-label">
+                      True Negative
+                    </span>
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- METRIC EXPLANATION -->
+        <!-- ================================================= -->
+
+        <details class="explanation">
+
+          <summary>
+            <span>📖</span>
+            What do these metrics mean?
+          </summary>
+
+          <div class="explanation-grid">
+
+            <div>
+              <strong>Accuracy</strong>
+              <p>
+                Percentage of all predictions that were correct.
+              </p>
+            </div>
+
+            <div>
+              <strong>Precision</strong>
+              <p>
+                Of all images flagged as hateful, how many actually were?
+              </p>
+            </div>
+
+            <div>
+              <strong>Recall</strong>
+              <p>
+                Of all actually hateful images, how many did the model catch?
+              </p>
+            </div>
+
+            <div>
+              <strong>F1 Score</strong>
+              <p>
+                Harmonic mean of Precision and Recall.
+              </p>
+            </div>
+
+          </div>
+
+        </details>
+
+
+      
+
+      </div>
+
+    </section>
+
+  </ng-container>
+
+</div>

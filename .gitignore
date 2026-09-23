@@ -1,0 +1,31 @@
+# =========================
+# Backend
+# =========================
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/venv/
+
+# Uploaded / generated images
+backend/app/static/uploads/*
+backend/app/static/blurred/*
+!backend/app/static/uploads/.gitkeep
+!backend/app/static/blurred/.gitkeep
+
+# Large ML model files
+backend/models/
+
+
+# =========================
+# Frontend
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+
+# =========================
+# Misc
+# =========================
+.DS_Store
+*.log

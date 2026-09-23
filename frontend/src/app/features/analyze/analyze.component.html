@@ -1,0 +1,285 @@
+<div class="analyze-page">
+
+  <!-- ===================================================== -->
+  <!-- HEADER -->
+  <!-- ===================================================== -->
+
+  <section class="page-header">
+    <div>
+      <h1>Meme Hate Speech Detector</h1>
+      <p>
+        Upload a meme, select its language, and analyse the image for
+        hate speech and harmful content.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- ANALYSIS CARD -->
+  <!-- ===================================================== -->
+
+  <section class="card">
+
+    <div class="card-header">
+      <div>
+        <h2>Analyse Image</h2>
+        <p>
+          Upload one or more meme images for OCR, captioning and
+          hate-speech analysis.
+        </p>
+      </div>
+    </div>
+<!-- =================================================== -->
+    <!-- OCR LANGUAGE -->
+    <!-- =================================================== -->
+
+    <div class="form-section">
+
+      <label class="form-label">
+        OCR Language
+      </label>
+
+      <p class="help-text">
+        Select the language that the text inside the meme is expected
+        to use. Only one language can be selected.
+      </p>
+
+      <div class="language-grid">
+
+        <button
+          type="button"
+          *ngFor="let lang of ocrLangOptions"
+          class="language-button"
+          [class.selected]="selectedLangs.includes(lang.code)"
+          (click)="toggleLang(lang.code)"
+        >
+          {{ lang.label }}
+        </button>
+
+      </div>
+
+      <div
+        class="selected-language"
+        *ngIf="selectedLanguageNames"
+      >
+        Selected language:
+        <strong>{{ selectedLanguageNames }}</strong>
+      </div>
+
+    </div>
+
+    <!-- =================================================== -->
+    <!-- FILE UPLOAD -->
+    <!-- =================================================== -->
+
+    <!-- =================================================== -->
+<!-- FILE UPLOAD -->
+<!-- =================================================== -->
+
+<div class="form-section">
+
+  <label class="form-label">
+    Upload meme image
+  </label>
+
+  <div class="upload-box">
+
+    <!-- Hidden real file input -->
+    <input
+      #fileInput
+      id="memeFileInput"
+      type="file"
+      accept="image/*"
+      multiple
+      (change)="onFilesSelected($event)"
+    />
+
+    <!-- Custom choose button -->
+    <button
+      type="button"
+      class="choose-file-btn"
+      (click)="fileInput.click()"
+    >
+      <span class="upload-icon">↑</span>
+
+      <span class="choose-file-content">
+        <strong>Choose Meme Images</strong>
+        <small>Select one or more images</small>
+      </span>
+    </button>
+
+    <small class="help-text">
+      You can upload up to {{ maxBatch }} images at once.
+    </small>
+
+  </div>
+
+</div>
+
+
+    <!-- =================================================== -->
+    <!-- SELECTED FILES -->
+    <!-- =================================================== -->
+
+    <div
+      class="selected-files"
+      *ngIf="selectedFiles.length"
+    >
+
+      <h3>Selected Images</h3>
+
+      <div
+  class="file-item"
+  *ngFor="let file of selectedFiles; let i = index"
+>
+        <span>{{ file.name }}</span>
+        <span>{{ (file.size / 1024 / 1024).toFixed(2) }} MB</span>
+         <button
+    type="button"
+    class="remove-file-btn"
+    (click)="removeSelectedFile(i)"
+    aria-label="Remove image"
+  >
+    ×
+  </button>
+
+      </div>
+
+    </div>
+
+
+    
+
+
+    <!-- =================================================== -->
+    <!-- THRESHOLD -->
+    <!-- =================================================== -->
+
+    <!-- <div class="form-section">
+
+      <label class="form-label">
+        Hate Speech Threshold:
+        <strong>{{ thresholdPct }}%</strong>
+      </label>
+
+      <input
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        [(ngModel)]="thresholdPct"
+      />
+
+    </div> -->
+
+
+    <!-- =================================================== -->
+    <!-- ERROR -->
+    <!-- =================================================== -->
+
+    <div
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- =================================================== -->
+    <!-- ANALYSE BUTTON -->
+    <!-- =================================================== -->
+
+    <button
+      type="button"
+      class="primary"
+      [disabled]="
+        !selectedFiles.length ||
+        !selectedLangs.length ||
+        loading
+      "
+      (click)="runUploadAnalysis()"
+    >
+      <span *ngIf="!loading">
+        Analyse Meme
+      </span>
+
+      <span *ngIf="loading">
+        Analysing...
+      </span>
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- RESULTS SUMMARY -->
+  <!-- ===================================================== -->
+
+
+<section
+  class="stats-grid"
+  *ngIf="batchResults.length"
+>
+
+  <app-stat-card
+    label="Total Analysed"
+    [value]="batchResults.length"
+  ></app-stat-card>
+
+  <app-stat-card
+    label="Hate Speech"
+    [value]="hateCount"
+  ></app-stat-card>
+
+  <app-stat-card
+    label="Safe"
+    [value]="safeCount"
+  ></app-stat-card>
+
+</section>
+
+
+
+  <!-- ===================================================== -->
+  <!-- RESULTS -->
+  <!-- ===================================================== -->
+
+  <section
+    class="results-section"
+    *ngIf="batchResults.length"
+  >
+
+    <div class="section-header">
+
+      <div>
+        <h2>Analysis Results</h2>
+        <p>
+          OCR text, generated caption and hate-speech classification
+          for the uploaded memes.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="secondary"
+        (click)="downloadPdf()"
+      >
+        Export PDF
+      </button>
+
+    </div>
+
+
+    <div class="results-grid">
+
+      <app-result-card
+        *ngFor="let result of batchResults"
+        [result]="result"
+      ></app-result-card>
+
+    </div>
+
+  </section>
+
+</div>
