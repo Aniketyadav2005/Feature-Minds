@@ -2,7 +2,16 @@
 
 An end-to-end full-stack AI application for analysing meme images, extracting and validating text, generating image captions, detecting potentially hateful content, categorising detected hate speech, storing analysis history, evaluating model performance with human ground truth, and generating professional PDF reports.
 
----
+
+<img width="942" height="440" alt="Screenshot 2026-09-23 060215" src="https://github.com/user-attachments/assets/44139e01-74ae-4c15-9506-e990f16298fc" />
+<img width="770" height="399" alt="Screenshot 2026-09-23 060238" src="https://github.com/user-attachments/assets/fcf8f59c-9590-4d8e-95c7-f0225d7d1306" />
+<img width="755" height="413" alt="Screenshot 2026-09-23 060247" src="https://github.com/user-attachments/assets/f9a7fdf3-21b0-4943-93d9-92f695e05641" />
+<img width="946" height="437" alt="Screenshot 2026-09-23 060326" src="https://github.com/user-attachments/assets/eec2a734-9051-44c4-a0ee-452f86bb028a" />
+<img width="957" height="434" alt="Screenshot 2026-09-23 060406" src="https://github.com/user-attachments/assets/0bc4f12a-abae-44e0-88c1-15122e249acf" />
+<img width="946" height="438" alt="Screenshot 2026-09-23 060424" src="https://github.com/user-attachments/assets/f756bbf4-5e8d-490a-87bc-9126a5e896ed" />
+<img width="938" height="438" alt="Screenshot 2026-09-23 060501" src="https://github.com/user-attachments/assets/0bba316c-9f57-4ec8-bc91-2f7c33597290" />
+<img width="954" height="443" alt="Screenshot 2026-09-23 060516" src="https://github.com/user-attachments/assets/afe05f2b-bb18-4b42-8ab9-3cf91f2a858f" />
+
 
 # 2) Project Overview
 
